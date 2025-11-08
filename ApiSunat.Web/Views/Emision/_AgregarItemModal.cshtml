@@ -1,0 +1,99 @@
+﻿@model IEnumerable<ApiSunat.Domain.Entities.Producto>
+@{
+    // Este modal no envía un formulario, solo lo usa para cálculos de JS
+}
+
+<div class="mb-3">
+    <label class="form-label">Buscar en Lista de Precios</label>
+    <select id="productoSearch" class="form-select">
+        <option value="">-- Escribir un ítem manualmente --</option>
+        @foreach (var prod in Model)
+        {
+            <option value="@prod.ProductoId"
+                    data-descripcion="@prod.Descripcion"
+                    data-valorunitario="@prod.ValorUnitario.ToString("F5")">
+                @prod.Descripcion
+            </option>
+        }
+    </select>
+</div>
+
+<hr />
+
+<div class="row g-3">
+    <div class="col-md-3">
+        <label class="form-label">Cantidad</label>
+        <input type="number" class="form-control" id="itemCantidad" value="1" />
+    </div>
+    <div class="col-md-9">
+        <label class="form-label">Descripción</label>
+        <input type="text" class="form-control" id="itemDescripcion" />
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">V. Unitario (sin IGV)</label>
+        <input type="number" step="0.00001" class="form-control text-end" id="itemValorUnitario" />
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">IGV (18%)</label>
+        <input type="text" class="form-control text-end" id="itemIgv" readonly />
+    </div>
+    <div class="col-md-4">
+        <label class="form-label fw-bold">Importe (Total)</label>
+        <input type="text" class="form-control text-end fw-bold" id="itemImporte" readonly />
+    </div>
+</div>
+
+<div class="modal-footer mt-4">
+    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+    <button type="button" class="btn btn-primary" id="btnConfirmarAgregarItem">Agregar a la Venta</button>
+</div>
+
+<script>
+    $(document).ready(function() {
+
+        const igvRate = 1.18;
+        const $cantidad = $('#itemCantidad');
+        const $descripcion = $('#itemDescripcion');
+        const $valorUnitario = $('#itemValorUnitario');
+        const $igv = $('#itemIgv');
+        const $importe = $('#itemImporte');
+        const $buscador = $('#productoSearch');
+
+        // 1. Función para calcular los totales del modal
+        function calcularModal() {
+            let cant = parseFloat($cantidad.val()) || 0;
+            let vu = parseFloat($valorUnitario.val()) || 0;
+
+            let totalSinIgv = cant * vu;
+            let totalConIgv = totalSinIgv * igvRate;
+            let igvMonto = totalConIgv - totalSinIgv;
+
+            $igv.val(igvMonto.toFixed(5));
+            $importe.val(totalConIgv.toFixed(2)); // El importe final va con 2 decimales
+        }
+
+        // 2. Evento: Al cambiar el buscador de productos
+        $buscador.on('change', function() {
+            const $selected = $(this).find('option:selected');
+            const descripcion = $selected.data('descripcion');
+            const valorUnitario = $selected.data('valorunitario');
+
+            if (descripcion) {
+                $descripcion.val(descripcion);
+                $valorUnitario.val(valorUnitario);
+            } else {
+                $descripcion.val('');
+                $valorUnitario.val('0');
+            }
+            calcularModal();
+        });
+
+        // 3. Evento: Al cambiar cantidad o valor unitario
+        $cantidad.on('keyup change', calcularModal);
+        $valorUnitario.on('keyup change', calcularModal);
+
+        // 4. Hacemos que el select sea un buscador (usando Select2)
+        // Si no tienes Select2, puedes borrar esta línea, pero el select será básico
+        // $buscador.select2({ dropdownParent: $('#itemModal') }); // Asumiendo que el modal se llama 'itemModal'
+    });
+</script>

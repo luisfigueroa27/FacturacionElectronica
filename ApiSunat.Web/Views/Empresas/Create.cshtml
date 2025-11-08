@@ -1,0 +1,72 @@
+﻿@model ApiSunat.Domain.Entities.Empresa
+@{
+    ViewData["Title"] = "Nueva Empresa";
+}
+
+<div class="d-flex align-items-center mb-3">
+    <a asp-action="Index" class="btn btn-link nav-link p-0 me-3">
+        <i class="fas fa-arrow-left"></i> Volver
+    </a>
+    <h2 class="mb-0">Nueva Empresa</h2>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-4">
+
+        <form asp-action="Create" method="post" class="row g-3">
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="col-md-4 text-center">
+                <div class="border rounded p-4 d-flex flex-column align-items-center justify-content-center" style="height: 200px; background-color: #f8f9fa;">
+                    <i class="fas fa-image fa-3x text-muted mb-2"></i>
+                    <button type="button" class="btn btn-light btn-sm">Agregar Logo</button>
+                </div>
+                <div class="form-check mt-3 text-start">
+                    <input class="form-check-input" asp-for="MostrarEnTicket" />
+                    <label class="form-check-label" asp-for="MostrarEnTicket">
+                        Mostrar en el formato Ticket
+                    </label>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <div class="mb-3">
+                    <label asp-for="Ruc" class="form-label">RUC</label>
+                    <input asp-for="Ruc" class="form-control" placeholder="00000000000" />
+                    <span asp-validation-for="Ruc" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="NombreLegal" class="form-label">Nombre Legal</label>
+                    <input asp-for="NombreLegal" class="form-control" />
+                    <span asp-validation-for="NombreLegal" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="NombreComercial" class="form-label">Nombre Comercial (opcional)</label>
+                    <input asp-for="NombreComercial" class="form-control" />
+                    <span asp-validation-for="NombreComercial" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="DireccionFiscal" class="form-label">Dirección Fiscal (opcional)</label>
+                    <input asp-for="DireccionFiscal" class="form-control" />
+                    <span asp-validation-for="DireccionFiscal" class="text-danger"></span>
+                </div>
+
+                <div class="text-end mt-4">
+                    <a asp-action="Index" class="btn btn-secondary me-2">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">Crear</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

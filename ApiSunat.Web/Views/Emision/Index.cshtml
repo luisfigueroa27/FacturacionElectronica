@@ -1,0 +1,62 @@
+﻿@model ApiSunat.Domain.Entities.Empresa
+@{
+    ViewData["Title"] = "Emitir Comprobante";
+}
+
+<div class="d-flex align-items-center mb-3">
+    <a asp-controller="Empresas" asp-action="Index" class="btn btn-link nav-link p-0 me-3">
+        <i class="fas fa-arrow-left"></i> Volver
+    </a>
+    <h2 class="mb-0">Emitir</h2>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-4">
+
+        <h5 class="mb-3">Comprobantes de Pago</h5>
+        <div class="row g-3">
+
+            <div class="col-md-3">
+                <a asp-action="CrearFactura" asp-route-empresaId="@Model.EmpresaId" class="card text-decoration-none text-dark text-center py-3">
+                    <img src="@(Model.LogoUrl ?? "/images/default-logo.png")"
+                         class="rounded-circle mx-auto" style="width: 60px; height: 60px; object-fit: cover;" />
+                    <div class="card-body p-1">
+                        <h6 class="card-title mb-0">Factura</h6>
+                        <small class="text-muted">@Model.NombreComercial</small>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-md-3">
+                <a asp-action="CrearBoleta" asp-route-empresaId="@Model.EmpresaId" class="card text-decoration-none text-dark text-center py-3">
+                    <img src="@(Model.LogoUrl ?? "/images/default-logo.png")"
+                         class="rounded-circle mx-auto" style="width: 60px; height: 60px; object-fit: cover;" />
+                    <div class="card-body p-1">
+                        <h6 class="card-title mb-0">Boleta de Venta</h6>
+                        <small class="text-muted">@Model.NombreComercial</small>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+
+        <hr class="my-4" />
+
+        <h5 class="mb-3">Otros Documentos</h5>
+        <div class="row g-3">
+
+            <div class="col-md-3">
+                <a href="#" class="card text-decoration-none text-dark text-center py-3">
+                    <img src="@(Model.LogoUrl ?? "/images/default-logo.png")"
+                         class="rounded-circle mx-auto" style="width: 60px; height: 60px; object-fit: cover;" />
+                    <div class="card-body p-1">
+                        <h6 class="card-title mb-0">Proforma</h6>
+                        <small class="text-muted">@Model.NombreComercial</small>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+</div>

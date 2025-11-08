@@ -1,0 +1,177 @@
+﻿@model ApiSunat.Domain.Entities.Producto
+
+<form asp-action="Save" method="post" id="productoForm">
+
+    <input type="hidden" asp-for="ProductoId" />
+    <input type="hidden" asp-for="EmpresaId" />
+
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+    <div class="mb-3">
+        <select asp-for="TipoOperacion" class="form-select">
+            <option value="Operacion Gravada">Operación Gravada</option>
+            <option value="Operacion Exonerada">Operación Exonerada</option>
+            <option value="Operacion Inafecta">Operación Inafecta</option>
+        </select>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-5">
+            <select asp-for="UnidadMedida" class="form-select">
+                <option value="Unidad">Unidades</option>
+                <option value="Servicio">Servicios</option>
+                <option value="Centimetro">Centimetro</option>
+                <option value="Metros">Metro</option>
+                <option value="Docenas">Docenas</option>
+                <option value="Gramos">Gramos</option>
+                <option value="Kilos">Kilogramos</option>
+                <option value="Kits">Kits</option>
+                <option value="Litros">Litros</option>
+            </select>
+            <span asp-validation-for="UnidadMedida" class="text-danger"></span>
+        </div>
+        <div class="col-md-7">
+            <input asp-for="Codigo" class="form-control" placeholder="código (opcional)" />
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <input asp-for="Descripcion" class="form-control" placeholder="descripción detallada" />
+        <span asp-validation-for="Descripcion" class="text-danger"></span>
+    </div>
+
+    <hr />
+
+    <div class="row">
+
+        <div class="col-md-5">
+            <h6 class="text-muted">Totales</h6>
+            <div class="mb-3 row">
+                <label class="col-sm-5 col-form-label text-end">Ope. Gravada</label>
+                <div class="col-sm-7">
+                    <input type="text" class="form-control text-end" id="totalOpeGravada" value="0.00" readonly />
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label class="col-sm-5 col-form-label text-end">IGV</label>
+                <div class="col-sm-7">
+                    <input type="text" class="form-control text-end" id="totalIGV" value="0.00" readonly />
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label class="col-sm-5 col-form-label fw-bold text-end">Importe Total</label>
+                <div class="col-sm-7">
+                    <input type="text" class="form-control text-end fw-bold" id="totalImporte" value="0.00" readonly />
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-7">
+            <div class="mb-3">
+                <input asp-for="ValorUnitario" class="form-control text-end" placeholder="valor unitario" id="valorUnitario" type="number" step="0.001" />
+                <span asp-validation-for="ValorUnitario" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <div class="input-group">
+                    <span class="input-group-text">IGV 18%</span>
+                    <input type="text" class="form-control text-end" id="igvCalculado" value="0.00" readonly />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <div class="input-group">
+                    <span class="input-group-text">precio unitario (incluye IGV)</span>
+                    <input type="number" step="0.001" class="form-control text-end" id="precioUnitario" value="0.00" />
+                </div>
+            </div>
+
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" disabled />
+                <label class="form-check-label">usar 10 decimales</label>
+            </div>
+            <div class="form-check">
+                <input asp-for="ImpuestoBolsas" class="form-check-input" />
+                <label class="form-check-label" asp-for="ImpuestoBolsas">Impuesto a las bolsas plásticas</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer mt-3 pt-3 border-top">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-primary">
+            @if (Model.ProductoId == 0)
+            {
+                <span>Agregar</span>
+            }
+            else
+            {
+                <span>Guardar</span>
+            }
+        </button>
+    </div>
+</form>
+
+<script>
+    $(document).ready(function () {
+
+        const igvRate = 1.18; // Tasa de IGV (1 + 0.18)
+
+        // Inputs de la derecha (Unitarios)
+        const valorUnitarioInput = $('#valorUnitario');
+        const igvCalculadoInput = $('#igvCalculado');
+        const precioUnitarioInput = $('#precioUnitario'); // Este ahora es editable
+
+        // Inputs de la izquierda (Totales)
+        const totalOpeGravadaInput = $('#totalOpeGravada');
+        const totalIGVInput = $('#totalIGV');
+        const totalImporteInput = $('#totalImporte');
+
+        // --- Función 1: Calcular desde el VALOR UNITARIO (SIN IGV) ---
+        function calcularDesdeValor() {
+            let valorUnitario = parseFloat(valorUnitarioInput.val()) || 0;
+            let precioUnitario = valorUnitario * igvRate;
+            let igv = precioUnitario - valorUnitario;
+
+
+            // Actualizar campos de la derecha
+            precioUnitarioInput.val(precioUnitario.toFixed(3));
+            igvCalculadoInput.val(igv.toFixed(3));
+
+            // Actualizar campos de la izquierda (Totales)
+            totalOpeGravadaInput.val(valorUnitario.toFixed(2));
+            totalIGVInput.val(igv.toFixed(2));
+            totalImporteInput.val(precioUnitario.toFixed(2));
+        }
+
+        // --- Función 2: Calcular desde el PRECIO UNITARIO (CON IGV) ---
+        function calcularDesdePrecio() {
+            let precioUnitario = parseFloat(precioUnitarioInput.val()) || 0;
+            let valorUnitario = precioUnitario / igvRate;
+            let igv = precioUnitario - valorUnitario;
+
+            // Actualizar campos de la derecha
+            valorUnitarioInput.val(valorUnitario.toFixed(3));
+            igvCalculadoInput.val(igv.toFixed(3));
+
+            // Actualizar campos de la izquierda (Totales)
+            totalOpeGravadaInput.val(valorUnitario.toFixed(2));
+            totalIGVInput.val(igv.toFixed(2));
+            totalImporteInput.val(precioUnitario.toFixed(2));
+        }
+
+        // --- Event Listeners ---
+        // Si el usuario cambia el VALOR, calculamos el PRECIO
+        valorUnitarioInput.on('keyup change', calcularDesdeValor);
+
+        // Si el usuario cambia el PRECIO, calculamos el VALOR
+        precioUnitarioInput.on('keyup change', calcularDesdePrecio);
+
+        // --- Carga Inicial ---
+        // Al cargar el modal (especialmente en modo Edición),
+        // el 'valorUnitario' es el único campo que viene del modelo.
+        // Disparamos su evento 'change' para calcular todo lo demás.
+        valorUnitarioInput.trigger('change');
+
+    });
+</script>
