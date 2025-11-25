@@ -1,0 +1,128 @@
+﻿@model IEnumerable<ApiSunat.Domain.Entities.Documento>
+@{
+    // Obtenemos los datos que pasamos desde el controlador
+    var empresa = (ApiSunat.Domain.Entities.Empresa)ViewBag.Empresa;
+    ViewData["Title"] = "Documentos";
+}
+
+<div class="d-flex align-items-center mb-3">
+    <a asp-controller="Empresas" asp-action="Index" class="btn btn-link nav-link p-0 me-3">
+        <i class="fas fa-arrow-left"></i> Volver
+    </a>
+    <h2 class="mb-0">Documentos</h2>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-4">
+        
+        <div class="d-flex align-items-center mb-3">
+            <div class="me-3">
+                <img src="@(empresa.LogoUrl ?? "/images/default-logo.png")" alt="Logo" style="width: 50px; height: 50px; border-radius: 8px; object-fit: cover;" />
+            </div>
+            <div class="flex-grow-1">
+                <h5 class="mb-0">@empresa.NombreComercial</h5>
+                <small class="text-success">RUC: @empresa.Ruc</small>
+            </div>
+        </div>
+
+        <form asp-action="Index" method="get" class="d-flex gap-2 mb-3">
+            <input type="hidden" name="empresaId" value="@empresa.EmpresaId" />
+            
+            <input type="date" name="fechaInicio" class="form-control" 
+                   value="@(ViewBag.FechaInicio?.ToString("yyyy-MM-dd"))" />
+            
+            <input type="date" name="fechaFin" class="form-control" 
+                   value="@(ViewBag.FechaFin?.ToString("yyyy-MM-dd"))" />
+            
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-search me-1"></i> Consultar
+            </button>
+        </form>
+
+        <ul class="nav nav-tabs mb-3">
+            <li class="nav-item">
+                <a class="nav-link active" data-bs-toggle="tab" href="#ventas">VENTAS</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" data-bs-toggle="tab" href="#compras">COMPRAS</a>
+            </li>
+            <li class="nav-item ms-auto">
+                <a asp-controller="Emision" asp-action="Index" asp-route-empresaId="@empresa.EmpresaId" class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i> Emitir
+                </a>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="ventas">
+                <table class="table table-hover align-middle">
+                    <tbody>
+                        @foreach (var doc in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    <strong>@doc.Serie-@doc.Correlativo.ToString("D8")</strong>
+                                    <span class="badge bg-light text-dark ms-2">@doc.TipoDocumento</span>
+                                </td>
+                                
+                                <td>@doc.FechaEmision.ToString("yyyy-MM-dd")</td>
+                                
+                                <td>
+                                    @if (doc.Cliente != null)
+                                    {
+                                        <small class="text-muted">
+                                            @doc.Cliente.TipoDocumentoIdentidad @doc.Cliente.NumeroDocumentoIdentidad - 
+                                            @doc.Cliente.NombreRazonSocial
+                                        </small>
+                                    }
+                                </td>
+                                
+                                <td class="text-end fw-bold">
+                                    @doc.ImporteTotal.ToString("F2") 
+                                    <small>@doc.Moneda</small>
+                                </td>
+
+                                <td class="text-end">
+
+                                    <a asp-controller="Emision"
+                                       asp-action="ImprimirA4"
+                                       asp-route-documentoId="@doc.DocumentoId"
+                                       target="_blank"
+                                       class="btn btn-sm btn-light"
+                                       title="Imprimir A4">
+                                        <i class="fas fa-print"></i>
+                                    </a>
+
+                                    <a asp-controller="Emision"
+                                       asp-action="DescargarPdfA4"
+                                       asp-route-documentoId="@doc.DocumentoId"
+                                       class="btn btn-sm btn-light"
+                                       title="Descargar PDF">
+                                        <i class="fas fa-download"></i>
+                                    </a>
+
+                                </td>
+                            </tr>
+                        }
+                        
+                        @if (!Model.Any())
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center p-4">
+                                    No se encontraron documentos para este rango de fechas.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                
+            </div>
+
+            <div class="tab-pane fade" id="compras">
+                <p class="p-4 text-center">Módulo de compras no implementado.</p>
+            </div>
+        </div>
+
+    </div>
+</div>

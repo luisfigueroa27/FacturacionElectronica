@@ -1,0 +1,78 @@
+﻿@model ApiSunat.Domain.Entities.Empresa
+@{
+    ViewData["Title"] = "Emitir Comprobante";
+}
+
+<div class="d-flex align-items-center mb-3">
+    <a asp-controller="Empresas" asp-action="Index" class="btn btn-link nav-link p-0 me-3">
+        <i class="fas fa-arrow-left"></i> Volver
+    </a>
+    <h2 class="mb-0">Emitir</h2>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-4">
+
+        <h5 class="mb-3">Comprobantes de Pago</h5>
+        <div class="row g-3">
+
+            <div class="col-md-3">
+                <a asp-action="CrearFactura" asp-route-empresaId="@Model.EmpresaId" class="card text-decoration-none text-dark text-center py-3 h-100 hover-shadow">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                        <img src="@(Model.LogoUrl ?? "/images/default-logo.png")"
+                             alt="Logo"
+                             class="mb-2"
+                             style="height: 60px; width: auto; max-width: 100%; object-fit: contain;" />
+
+                        <h6 class="card-title mb-0 fw-bold">Factura</h6>
+                        <small class="text-muted text-truncate w-100">@Model.NombreComercial</small>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-md-3">
+                <a asp-action="CrearBoleta" asp-route-empresaId="@Model.EmpresaId" class="card text-decoration-none text-dark text-center py-3 h-100 hover-shadow">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                        <img src="@(Model.LogoUrl ?? "/images/default-logo.png")"
+                             alt="Logo"
+                             class="mb-2"
+                             style="height: 60px; width: auto; max-width: 100%; object-fit: contain;" />
+
+                        <h6 class="card-title mb-0 fw-bold">Boleta de Venta</h6>
+                        <small class="text-muted text-truncate w-100">@Model.NombreComercial</small>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+
+        <hr class="my-4" />
+
+        <h5 class="mb-3">Otros Documentos</h5>
+        <div class="row g-3">
+
+            <div class="col-md-3">
+                <a href="#" class="card text-decoration-none text-dark text-center py-3 h-100 hover-shadow">
+                    <div class="card-body d-flex flex-column align-items-center justify-content-center">
+                        <img src="@(Model.LogoUrl ?? "/images/default-logo.png")"
+                             alt="Logo"
+                             class="mb-2"
+                             style="height: 60px; width: auto; max-width: 100%; object-fit: contain;" />
+
+                        <h6 class="card-title mb-0 fw-bold">Proforma</h6>
+                        <small class="text-muted text-truncate w-100">@Model.NombreComercial</small>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<style>
+    .hover-shadow:hover {
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;
+        transition: box-shadow 0.3s ease-in-out;
+    }
+</style>

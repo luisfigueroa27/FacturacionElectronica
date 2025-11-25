@@ -1,0 +1,90 @@
+﻿@model ApiSunat.Domain.Entities.Empresa
+@{
+    ViewData["Title"] = "Nueva Empresa";
+}
+
+<div class="d-flex align-items-center mb-3">
+    <a asp-action="Index" class="btn btn-link nav-link p-0 me-3">
+        <i class="fas fa-arrow-left"></i> Volver
+    </a>
+    <h2 class="mb-0">Nueva Empresa</h2>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-4">
+
+        <form asp-action="Create" enctype="multipart/form-data" method="post" class="row g-3">
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="col-md-4 text-center">
+                <div class="col-md-4 d-flex align-items-center justify-content-center">
+                    <div class="text-center p-4 border rounded bg-light" style="width: 100%; height: 250px; cursor: pointer;" onclick="document.getElementById('logoInput').click();">
+                        <img id="imgPreview" src="/images/default-logo.png" alt="Agregar Logo" class="img-fluid" style="max-height: 150px; object-fit: contain;">
+                        <p class="mt-3 text-muted">Clic para Agregar Logo</p>
+
+                        <input type="file" id="logoInput" name="logoFile" accept="image/png, image/jpeg, image/jpg" style="display: none;" onchange="previewImage(this);">
+                    </div>
+                    <span asp-validation-for="LogoUrl" class="text-danger"></span>
+                </div>
+
+                <script>
+                    function previewImage(input) {
+                        if (input.files && input.files[0]) {
+                            var reader = new FileReader();
+                            reader.onload = function (e) {
+                                // Actualiza la fuente de la imagen con el archivo seleccionado
+                                document.getElementById('imgPreview').src = e.target.result;
+                            }
+                            reader.readAsDataURL(input.files[0]);
+                        }
+                    }
+                </script>
+                <div class="form-check mt-3 text-start">
+                    <input class="form-check-input" asp-for="MostrarEnTicket" />
+                    <label class="form-check-label" asp-for="MostrarEnTicket">
+                        Mostrar en el formato Ticket
+                    </label>
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <div class="mb-3">
+                    <label asp-for="Ruc" class="form-label">RUC</label>
+                    <input asp-for="Ruc" class="form-control" placeholder="00000000000" />
+                    <span asp-validation-for="Ruc" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="NombreLegal" class="form-label">Nombre Legal</label>
+                    <input asp-for="NombreLegal" class="form-control" />
+                    <span asp-validation-for="NombreLegal" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="NombreComercial" class="form-label">Nombre Comercial (opcional)</label>
+                    <input asp-for="NombreComercial" class="form-control" />
+                    <span asp-validation-for="NombreComercial" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="DireccionFiscal" class="form-label">Dirección Fiscal (opcional)</label>
+                    <input asp-for="DireccionFiscal" class="form-control" />
+                    <span asp-validation-for="DireccionFiscal" class="text-danger"></span>
+                </div>
+
+                <div class="text-end mt-4">
+                    <a asp-action="Index" class="btn btn-secondary me-2">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">Crear</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
