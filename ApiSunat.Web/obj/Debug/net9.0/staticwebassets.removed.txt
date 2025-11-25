@@ -1,2 +1,0 @@
-D:\ApiSunat.Web\ApiSunat.Web\wwwroot\wkhtmltoimage.exe
-D:\ApiSunat.Web\ApiSunat.Web\wwwroot\wkhtmltopdf.exe
